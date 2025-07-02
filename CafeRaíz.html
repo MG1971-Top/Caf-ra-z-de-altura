@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café raíz de altura</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Estilos Globales y Componentes Básicos */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4b3832 0%, #7d6e67 100%);
+            color: #fff;
+            padding: 2em 1em;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.8em;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 1.5em;
+            background: #2c211f;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 1em 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #f7f7f7;
+            font-weight: 700;
+            padding: 0.8em 1.5em;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        nav a:hover,
+        nav a:focus {
+            background-color: #5a4b45;
+            color: #fff;
+        }
+
+        section {
+            padding: 3em 1em;
+            max-width: 1000px;
+            margin: 2em auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        section h2 {
+            color: #4b3832;
+            text-align: center;
+            margin-bottom: 1.5em;
+            font-size: 2.2em;
+            position: relative;
+            padding-bottom: 0.5em;
+        }
+
+        section h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: #a08479;
+            border-radius: 2px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5em 1em;
+            background: #2c211f;
+            margin-top: 3em;
+            color: #f7f7f7;
+            font-size: 0.9em;
+        }
+
+        /* Sección de Galería */
+        .carousel {
+            display: flex;
+            overflow-x: auto;
+            gap: 1.5em;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 1em; /* Espacio para la sombra de las imágenes */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Ocultar la barra de desplazamiento en Webkit (Chrome, Safari) */
+        .carousel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel img {
+            width: 300px; /* Ancho base de la imagen */
+            min-width: 280px; /* Ancho mínimo para evitar que se hagan demasiado pequeñas */
+            max-width: 100%;
+            height: 200px; /* Altura fija para consistencia */
+            flex-shrink: 0; /* Evita que las imágenes se encojan */
+            scroll-snap-align: start; /* Permite un desplazamiento suave */
+            border-radius: 8px;
+            object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .carousel img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .loading-message {
+            text-align: center;
+            width: 100%;
+            font-size: 1.2em;
+            color: #666;
+            padding: 2em 0;
+        }
+
+        /* Sección de Servicios */
+        .servicios-lista {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5em;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .servicios-lista li {
+            background: #fdfdfd;
+            padding: 1.5em;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .servicios-lista li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .servicios-lista i {
+            color: #a08479;
+            margin-right: 1em;
+            font-size: 1.8em;
+            width: 40px; /* Fijo para alinear los iconos */
+            text-align: center;
+        }
+
+        /* Sección de Agendar Cita */
+        #citaForm {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.2em;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2em;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fcfcfc;
+        }
+
+        #citaForm label {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 0.5em;
+            display: block;
+        }
+
+        #citaForm input[type="text"],
+        #citaForm input[type="email"],
+        #citaForm input[type="date"],
+        #citaForm input[type="time"],
+        #citaForm select {
+            width: calc(100% - 2em); /* Resta el padding para que sea 100% */
+            padding: 0.8em 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box; /* Incluye padding y border en el ancho */
+        }
+
+        #citaForm input[type="text"]:focus,
+        #citaForm input[type="email"]:focus,
+        #citaForm input[type="date"]:focus,
+        #citaForm input[type="time"]:focus,
+        #citaForm select:focus {
+            border-color: #a08479;
+            box-shadow: 0 0 8px rgba(160, 132, 121, 0.2);
+            outline: none;
+        }
+
+        #citaForm button[type="submit"] {
+            background-color: #4b3832;
+            color: white;
+            padding: 1em 1.5em;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 1em;
+            width: 100%;
+        }
+
+        #citaForm button[type="submit"]:hover {
+            background-color: #7d6e67;
+            transform: translateY(-2px);
+        }
+
+        /* Modal Personalizado */
+        .modal {
+            display: none; /* Inicialmente oculto */
+            position: fixed;
+            z-index: 2000; /* Asegura que esté por encima de todo */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6); /* Fondo semi-transparente */
+            justify-content: center; /* Centra horizontalmente */
+            align-items: center; /* Centra verticalmente */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto; /* Mantenido para compatibilidad, pero flexbox hace el centrado principal */
+            padding: 30px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            position: relative;
+        }
+
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #333;
+            text-decoration: none;
+        }
+
+        #modalMessage {
+            margin-top: 1em;
+            font-size: 1.1em;
+            color: #444;
+        }
+
+        /* Responsividad */
+        /* Dispositivos medianos (tablets, max-width: 768px) */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.2em;
+            }
+
+            header p {
+                font-size: 1em;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                gap: 0.8em;
+                padding: 0.8em 0;
+            }
+
+            nav a {
+                padding: 0.6em 1em;
+                font-size: 0.9em;
+            }
+
+            section {
+                padding: 2em 0.8em;
+                margin: 1.5em auto;
+            }
+
+            section h2 {
+                font-size: 1.8em;
+                margin-bottom: 1em;
+            }
+
+            .carousel {
+                gap: 1em;
+            }
+
+            .carousel img {
+                width: 250px;
+                min-width: 250px;
+                height: 180px;
+            }
+
+            .servicios-lista {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1em;
+            }
+
+            .servicios-lista li {
+                padding: 1em;
+                font-size: 0.95em;
+            }
+
+            .servicios-lista i {
+                font-size: 1.5em;
+                margin-right: 0.8em;
+            }
+
+            #citaForm {
+                padding: 1.5em;
+            }
+
+            #citaForm input,
+            #citaForm select,
+            #citaForm button {
+                font-size: 0.95em;
+                padding: 0.7em 0.8em;
+            }
+        }
+
+        /* Dispositivos pequeños (móviles, max-width: 480px) */
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            header p {
+                font-size: 0.9em;
+            }
+
+            nav {
+                flex-direction: column;
+                gap: 0.5em;
+                padding: 0.5em;
+            }
+
+            nav a {
+                padding: 0.5em 1em;
+                font-size: 0.85em;
+                text-align: center;
+            }
+
+            section {
+                padding: 1.5em 0.5em;
+                margin: 1em auto;
+            }
+
+            section h2 {
+                font-size: 1.6em;
+            }
+
+            .carousel {
+                gap: 0.8em;
+            }
+
+            .carousel img {
+                width: 100%; /* Permite que las imágenes ocupen el ancho completo */
+                min-width: unset; /* Reinicia el min-width */
+                height: 160px;
+            }
+
+            .servicios-lista {
+                grid-template-columns: 1fr; /* Una columna en móviles */
+            }
+
+            .servicios-lista li {
+                font-size: 0.9em;
+                padding: 0.8em;
+            }
+
+            .servicios-lista i {
+                font-size: 1.3em;
+                margin-right: 0.6em;
+            }
+
+            #citaForm {
+                padding: 1em;
+            }
+
+            #citaForm input,
+            #citaForm select,
+            #citaForm button {
+                font-size: 0.9em;
+                padding: 0.6em 0.7em;
+            }
+
+            .modal-content {
+                width: 90%;
+                padding: 20px;
+            }
+
+            .close-button {
+                font-size: 24px;
+                top: 10px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Café raíz de altura</h1>
+        <p>Expertos en la selección y preparación de café de alta calidad</p>
+    </header>
+
+    <nav>
+        <a href="#galeria">Galería</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#citas">Agendar Cita</a>
+    </nav>
+
+    <section id="galeria">
+        <h2>Nuestra Galería de Café</h2>
+        <div class="carousel">
+            <p class="loading-message">Cargando imágenes de café...</p>
+            </div>
+    </section>
+
+    <section id="servicios">
+        <h2>Nuestros Servicios</h2>
+        <ul class="servicios-lista">
+            <li><i class="fas fa-seedling"></i> Cultivo Sostenible</li>
+            <li><i class="fas fa-hand-holding-heart"></i> Tostado Artesanal</li>
+            <li><i class="fas fa-mug-hot"></i> Degustaciones Exclusivas</li>
+            <li><i class="fas fa-truck"></i> Envío a Domicilio</li>
+            <li><i class="fas fa-certificate"></i> Certificación Orgánica</li>
+            <li><i class="fas fa-store"></i> Venta al por Mayor y Menor</li>
+        </ul>
+    </section>
+
+    <section id="citas">
+        <h2>Agenda tu Cita</h2>
+        <form id="citaForm">
+            <label for="nombre">Nombre completo:</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <label for="email">Correo electrónico:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="tipoCafe">Tipo de café:</label>
+            <select id="tipoCafe" name="tipoCafe" required>
+                <option value="">Seleccione una opción</option>
+                <option value="Gourmet grano">Gourmet (grano)</option>
+                <option value="Gourmet molido">Gourmet (molido)</option>
+                <option value="Medio-Gourmet grano">Medio-Gourmet (grano)</option>
+                <option value="Medio-Gourmet molido">Medio-Gourmet (molido)</option>
+            </select>
+
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" required>
+
+            <label for="hora">Hora:</label>
+            <input type="time" id="hora" name="hora" required>
+
+            <button type="submit">Confirmar cita</button>
+        </form>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Café raíz de altura. Todos los derechos reservados.</p>
+    </footer>
+
+    <div id="customModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p id="modalMessage"></p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script src="https://cdn.botpress.cloud/webchat/v3.0/inject.js" defer></script>
+    <script src="https://files.bpcontent.cloud/2025/06/24/03/20250624034233-5YCIUZEW.js" defer></script>
+
+    <script>
+        // JS para la funcionalidad interactiva
+
+        // API Key para la generación de imágenes. Canvas se encargará de inyectarla.
+        // Se deja vacío aquí para que Canvas pueda inyectar el valor real.
+        const apiKey = ""; // ¡IMPORTANTE! Canvas inyectará el valor real aquí.
+
+        // Referencias a elementos del DOM para el modal
+        const customModal = document.getElementById('customModal');
+        const modalMessage = document.getElementById('modalMessage');
+        const closeButton = document.querySelector('.close-button');
+
+        /**
+         * Muestra el modal con un mensaje específico.
+         * @param {string} message - El mensaje a mostrar en el modal.
+         */
+        function showModal(message) {
+            modalMessage.textContent = message;
+            customModal.style.display = 'flex'; // Usamos flex para centrado
+        }
+
+        /**
+         * Oculta el modal.
+         */
+        function hideModal() {
+            customModal.style.display = 'none';
+        }
+
+        // Event Listeners para el modal
+        closeButton.addEventListener('click', hideModal);
+        window.addEventListener('click', (event) => {
+            if (event.target == customModal) {
+                hideModal();
+            }
+        });
+
+        /**
+         * Genera y muestra imágenes dinámicamente usando una API.
+         * Muestra un mensaje de carga y luego reemplaza con las imágenes generadas o un mensaje de error.
+         */
+        async function generateAndDisplayImages() {
+            const carousel = document.querySelector('.carousel');
+            const imagePrompts = [
+                "A modern coffee distributor preparing a gourmet coffee cup in a minimalist cafe, high detail, cinematic lighting, 4k",
+                "A farm worker carefully picking red coffee cherries from a lush coffee plant in a misty, sunny morning, natural light, realistic, 8k",
+                "A close-up shot of roasted coffee beans in a wooden bowl, rich brown colors, texture, warm light, studio quality",
+                "A person enjoying a latte art coffee in a cozy, warm-lit coffee shop, soft bokeh background, inviting atmosphere",
+                "Coffee pouring into a cup from a french press, steam rising, natural morning light, rustic kitchen setting",
+                "A vibrant illustration of coffee beans falling into a coffee cup, abstract, colorful, digital art, playful"
+            ];
+            const generatedImages = [];
+
+            // Mostrar mensaje de carga
+            carousel.innerHTML = '<p class="loading-message">Cargando imágenes de café...</p>';
+
+            if (!apiKey) {
+                console.error("API Key no está configurada. No se pueden generar imágenes.");
+                carousel.innerHTML = '<p class="loading-message" style="color: red;">Error: La API Key no está configurada para generar imágenes.</p>';
+                return;
+            }
+
+            for (const prompt of imagePrompts) {
+                try {
+                    const payload = {
+                        instances: [{ prompt_text: prompt }],
+                        parameters: {
+                            sample_count: 1,
+                            aspect_ratio: "16:9" // Ajuste para un formato más ancho
+                        }
+                    };
+
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload),
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(`Error HTTP: ${response.status} - ${errorData.error.message || response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    if (data.predictions && data.predictions.length > 0 && data.predictions[0].bytesBase64Encoded) {
+                        const base64Image = data.predictions[0].bytesBase64Encoded;
+                        const imageUrl = `data:image/png;base64,${base64Image}`;
+                        generatedImages.push({ src: imageUrl, alt: prompt });
+                    } else {
+                        console.warn(`No se recibió una imagen válida para el prompt: "${prompt}"`);
+                    }
+                } catch (error) {
+                    console.error(`Error al generar imagen para "${prompt}":`, error);
+                    // No detenemos el proceso, simplemente registramos el error y continuamos
+                }
+            }
+
+            // Una vez que todas las imágenes se han intentado generar, actualizamos el carrusel
+            carousel.innerHTML = ''; // Limpiar mensaje de carga
+
+            if (generatedImages.length > 0) {
+                generatedImages.forEach(image => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = image.src;
+                    imgElement.alt = image.alt;
+                    carousel.appendChild(imgElement);
+                });
+            } else {
+                carousel.innerHTML = '<p class="loading-message" style="color: red;">No se pudieron cargar las imágenes de la galería. Por favor, intente de nuevo más tarde.</p>';
+            }
+        }
+
+        /**
+         * Maneja el envío del formulario de agendar cita, genera un PDF con los detalles y limpia el formulario.
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            const citaForm = document.getElementById('citaForm');
+
+            // Llamar a la función de generación de imágenes al cargar la página
+            generateAndDisplayImages();
+
+            citaForm.addEventListener('submit', async (e) => {
+                e.preventDefault(); // Prevenir el envío predeterminado del formulario
+
+                const nombre = document.getElementById('nombre').value;
+                const email = document.getElementById('email').value;
+                const tipoCafe = document.getElementById('tipoCafe').value;
+                const fecha = document.getElementById('fecha').value;
+                const hora = document.getElementById('hora').value;
+
+                if (!nombre || !email || !tipoCafe || !fecha || !hora) {
+                    showModal('Por favor, complete todos los campos del formulario.');
+                    return;
+                }
+
+                // Verificar si jspdf está disponible
+                if (typeof window.jsPDF === 'undefined') {
+                    console.error('jsPDF no está cargado. Asegúrese de que el script de jspdf esté correctamente vinculado.');
+                    showModal('Error: La librería de generación de PDF no está disponible.');
+                    return;
+                }
+
+                try {
+                    // Inicializar jsPDF
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+
+                    // Añadir contenido al PDF
+                    doc.setFontSize(22);
+                    doc.text("Confirmación de Cita - Café raíz de altura", 10, 20);
+
+                    doc.setFontSize(12);
+                    doc.text(`Estimado(a) ${nombre},`, 10, 40);
+                    doc.text("Su cita ha sido agendada con éxito con los siguientes detalles:", 10, 50);
+
+                    doc.setFontSize(14);
+                    doc.text(`Nombre: ${nombre}`, 10, 70);
+                    doc.text(`Correo Electrónico: ${email}`, 10, 80);
+                    doc.text(`Tipo de Café: ${tipoCafe}`, 10, 90);
+                    doc.text(`Fecha: ${fecha}`, 10, 100);
+                    doc.text(`Hora: ${hora}`, 10, 110);
+
+                    doc.setFontSize(12);
+                    doc.text("Gracias por preferirnos. ¡Esperamos verte pronto!", 10, 130);
+
+                    // Guardar el PDF
+                    doc.save(`Cita_Cafe_Raiz_Altura_${nombre.replace(/\s/g, '_')}.pdf`);
+
+                    showModal('¡Cita confirmada! Se ha descargado un PDF con los detalles de su cita.');
+                    citaForm.reset(); // Limpiar el formulario
+                } catch (error) {
+                    console.error("Error al generar o descargar el PDF:", error);
+                    showModal('Ocurrió un error al confirmar su cita. Por favor, inténtelo de nuevo.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
